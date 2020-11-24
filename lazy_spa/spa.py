@@ -1,75 +1,104 @@
 """Authenticates with Lay-Z-Spa"""
-import requests
-import json
+import asyncio
 from datetime import datetime
-from .const import (
-    API_URI,
-    API_VERSION
-)
+from .api import Api
 class Spa:
     """The class to handle authenticating with the API"""
     def __init__(self, api, did):
         """
         constructor
         """
-        self.api = api
-        self.did = did
+        self.api = Api({"did": did, "api_token":api})                  
 
-    def is_online(self):
+    async def is_online(self):
         """
         Indicates if the device is currently online
         """
-        data = {"did": self.did, "api_token":self.api}
-        r = requests.post(API_URI + "/v" + API_VERSION + "/gizwits/is_online", data=data)
-        if r.status_code == 200:
-            return r.json()["data"] == "true"
-        return r
+        result = await self.api.send_command("is_online")
+        return result["data"] == "true"        
 
-    def status(self):
+    async def update_status(self):        
         """
         Indicates if the device is currently online
         """
-        data = {"did": self.did, "api_token":self.api}
-        r = requests.post(API_URI + "/v" + API_VERSION + "/gizwits/status", data=data)
-        if r.status_code == 200:
-            data= r.json()["data"]
-            print(data);            
-            self.updated_at = datetime.fromtimestamp(data["updated_at"])
-            attr = data["attr"]
-            
-            self.wave_appm_min = attr["wave_appm_min"]
-            self.heat_timer_min = attr["heat_timer_min"]
-            self.earth = attr["earth"]
-            self.wave_timer_min = attr["wave_timer_min"]
+        result = await self.api.send_command("status")
+        
+        data = result["data"]                              
+        self.updated_at = datetime.fromtimestamp(data["updated_at"])
+        attr = data["attr"]
+        
+        self.wave_appm_min = attr["wave_appm_min"]
+        self.heat_timer_min = attr["heat_timer_min"]
+        self.earth = attr["earth"]
+        self.wave_timer_min = attr["wave_timer_min"]
 
-            self.filter_timer_min = attr["filter_timer_min"]
-            self.heat_appm_min = attr["heat_appm_min"]
-            self.filter_appm_min = attr["filter_appm_min"]
+        self.filter_timer_min = attr["filter_timer_min"]
+        self.heat_appm_min = attr["heat_appm_min"]
+        self.filter_appm_min = attr["filter_appm_min"]
 
-            self.locked = attr["locked"]
+        self.locked = attr["locked"]
 
-            self.power = attr["power"]
-            self.heat_power = attr["heat_power"]
-            self.wave_power = attr["wave_power"]
-            self.filter_power = attr["filter_power"]
+        self.power = attr["power"] == 1
+        self.heat_power = attr["heat_power"] == 1
+        self.wave_power = attr["wave_power"] == 1
+        self.filter_power = attr["filter_power"] == 1
 
-            self.temp_now = attr["temp_now"]
-            self.temp_set = attr["temp_set"]
-            self.temp_set_unit ="°C" if attr["temp_set_unit"]=="摄氏" else "°F"
-            self.heat_temp_reach = attr["heat_temp_reach"] == 1
+        self.temp_now = attr["temp_now"]
+        self.temp_set = attr["temp_set"]
+        self.temp_set_unit ="°C" if attr["temp_set_unit"]=="摄氏" else "°F"
+        self.heat_temp_reach = attr["heat_temp_reach"] == 1
+
+        self.system_err1 = attr["system_err1"]
+        self.system_err2 = attr["system_err2"]
+        self.system_err3 = attr["system_err3"]
+        self.system_err4 = attr["system_err4"]
+        self.system_err5 = attr["system_err5"]
+        self.system_err6 = attr["system_err6"]
+        self.system_err7 = attr["system_err7"]
+        self.system_err8 = attr["system_err8"]
+        self.system_err9 = attr["system_err9"]            
+
+    async def set_power(self, power):
+        """
+        Turn the spa on or off
+        """
+        if power:
+            await self.api.send_command("turn_on")
+        else:
+            await self.api.send_command("turn_off")
+        await self.update_status()
 
 
+    async def set_filter_power(self, power):
+        """
+        Turn the filter on or off
+        """
+        if power:
+            await self.api.send_command("turn_filter_on")
+        else:
+            await self.api.send_command("turn_filter_off")
+        await self.update_status()
 
-            self.system_err1 = attr["system_err1"]
-            self.system_err2 = attr["system_err2"]
-            self.system_err3 = attr["system_err3"]
-            self.system_err4 = attr["system_err4"]
-            self.system_err5 = attr["system_err5"]
-            self.system_err6 = attr["system_err6"]
-            self.system_err7 = attr["system_err7"]
-            self.system_err8 = attr["system_err8"]
-            self.system_err9 = attr["system_err9"]
 
-            
-            
-        return r
+    async def set_heat_power(self, power):
+        """
+        Turn the heater on or off
+        """
+        if power:
+            # The filter MUST be turned on if the heater is to be turned on
+            if(not self.heat_power):
+                await self.api.send_command("turn_filter_on")
+            await self.api.send_command("turn_heat_on")
+        else:
+            await self.api.send_command("turn_heat_off")
+        await self.update_status()
+
+    async def set_wave_power(self, power):
+        """
+        Turn the bubbles on and off
+        """
+        if power:
+            await self.api.send_command("turn_wave_on")
+        else:
+            await self.api.send_command("turn_wave_off")
+        await self.update_status()
