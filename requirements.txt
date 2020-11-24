@@ -1,2 +1,1 @@
-pytz
 aiohttp>=3.7.1
