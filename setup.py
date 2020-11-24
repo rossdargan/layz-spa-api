@@ -1,4 +1,9 @@
 from distutils.core import setup
+
+def readme():
+    with open('README.rst') as desc:
+        return desc.read()
+
 setup(
   name = 'lazy_spa',
   packages = ['lazy_spa'], 
@@ -6,6 +11,7 @@ setup(
   license='MIT',
   description = 'An API to control wifi based lay-z spas', 
   long_description=readme(),
+  long_description_content_type='text/markdown',
   author = 'Ross Dargan',
   author_email = 'lazyspa@the-dargans.co.uk', 
   url = 'https://github.com/rossdargan/', 
