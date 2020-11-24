@@ -5,18 +5,18 @@ def readme():
         return desc.read()
 
 setup(
-  name = 'lazy_spa',
-  packages = ['lazy_spa'], 
+  name = 'layz_spa',
+  packages = ['layz_spa'], 
   version = '0.2',
   license='MIT',
   description = 'An API to control wifi based lay-z spas', 
   long_description=readme(),
   long_description_content_type='text/markdown',
   author = 'Ross Dargan',
-  author_email = 'lazyspa@the-dargans.co.uk', 
+  author_email = 'layzspa@the-dargans.co.uk', 
   url = 'https://github.com/rossdargan/', 
   download_url = 'https://github.com/rossdargan/lazy-spa-api/archive/0.2.tar.gz',  
-  keywords = ['Lazy Spa', 'Lay-z spa'],   
+  keywords = ['Lazy Spa', 'Layz Spa', 'Lay-z spa'],   
   install_requires=[
           'aiohttp'
       ],

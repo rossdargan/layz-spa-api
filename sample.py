@@ -3,9 +3,9 @@ import getpass
 from pprint import pprint
 from pathlib import Path
 import asyncio
-from lazy_spa.auth import Auth
-from lazy_spa.spa import Spa
-from lazy_spa.errors import Error
+from layz_spa.auth import Auth
+from layz_spa.spa import Spa
+from layz_spa.errors import Error
 async def main():
     cache_file = Path("test_token.cache")
 
