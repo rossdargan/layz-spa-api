@@ -5,6 +5,7 @@ setup(
   version = '0.2',
   license='MIT',
   description = 'An API to control wifi based lay-z spas', 
+  long_description=readme(),
   author = 'Ross Dargan',
   author_email = 'lazyspa@the-dargans.co.uk', 
   url = 'https://github.com/rossdargan/', 
