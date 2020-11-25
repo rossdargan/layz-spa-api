@@ -16,9 +16,9 @@ class Api:
         self.auth = auth
         self.base_url = base_url
 
-    async def send_command(self, command):       
+    async def send_command(self, command, query_string={}):       
         async with aiohttp.ClientSession() as session:
-            async with session.post(self.base_url+command, data=self.auth) as r:         
+            async with session.post(self.base_url+command, data=self.auth,params=query_string) as r:         
                        
                 if r.status == 200:
                     return await r.json()

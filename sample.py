@@ -26,7 +26,7 @@ async def main():
     
     print(await spa.is_online())
     await spa.update_status()
-    print("current power", spa.power)    
+    print("current power", spa.temp_set)    
 
     await spa.set_power(True)
     print("current power 1", spa.power)    
@@ -35,6 +35,8 @@ async def main():
 
    # await spa.set_power(True)
     print("current power 2", spa.power)    
+
+    await spa.set_target_temperature(22)
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
