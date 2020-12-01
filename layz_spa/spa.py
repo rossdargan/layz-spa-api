@@ -64,8 +64,10 @@ class Spa:
         """
         if power:
             await self.api.send_command("turn_on")
+            power=True
         else:
             await self.api.send_command("turn_off")
+            power=False
 
     async def set_filter_power(self, power):
         """
@@ -73,20 +75,21 @@ class Spa:
         """
         if power:
             await self.api.send_command("turn_filter_on")
+            filter_power=True
         else:
             await self.api.send_command("turn_filter_off")
+            filter_power=False
 
     async def set_heat_power(self, power):
         """
         Turn the heater on or off
         """
         if power:
-            # The filter MUST be turned on if the heater is to be turned on
-            if(not self.heat_power):
-                await self.api.send_command("turn_filter_on")
             await self.api.send_command("turn_heat_on")
+            heat_power=True
         else:
             await self.api.send_command("turn_heat_off")
+            heat_power=False
 
     async def set_wave_power(self, power):
         """
@@ -94,11 +97,14 @@ class Spa:
         """
         if power:
             await self.api.send_command("turn_wave_on")
+            wave_power=True
         else:
             await self.api.send_command("turn_wave_off")
+            wave_power=False
 
     async def set_target_temperature(self, temperature):
         """
         Set the target temperature for the spa
         """
         await self.api.send_command("temp_set", {"temperature": temperature})
+        target=temperature
